@@ -15,15 +15,16 @@ class EmojiMemoryGame {
     
     // Static - set on the type
     static func createMemoryGame() -> MemoryGame<String> {
-        let emojis: Array<String> = ["👻", "🎃", "🕷"]
-        return MemoryGame<String>(numberOfPairsOfCards: 3) { pairIndex in
-            return emojis[pairIndex]
+        let emojis: Array<String> = ["👻", "🎃", "🕷", "😄", "😳", "😎", "🤪", "🤠", "🤯", "🙄", "🤕", "😈"]
+        let random = Int.random(in: 2...5)
+        return MemoryGame<String>(numberOfPairsOfCards: random) { _ in
+            return emojis[Int.random(in: 0..<(emojis.count-1))]
         }
     }
     
     // MARK: - Access to the Model
     var cards: Array<MemoryGame<String>.Card> {
-        return model.cards
+        return model.cards.shuffled()
     }
     
     // MARK: - Intent(s)

@@ -20,9 +20,9 @@ struct MemoryGame<CardContent> {
 
     // Only initializes all of our var
     init(numberOfPairsOfCards: Int, cardContentFactory: (Int) -> CardContent) {
-        cards = Array<Card>()         // empty array of Cards
-        for pairIndex in 0..<numberOfPairsOfCards { // not including numberOfPairsOfCards
-            let content = cardContentFactory(pairIndex) // VIEWMODEL knows the type!
+        cards = Array<Card>()                                                  // empty array of Cards
+        for pairIndex in 0..<numberOfPairsOfCards {                            // not including numberOfPairsOfCards
+            let content = cardContentFactory(pairIndex)                        // VIEWMODEL knows the type!
             cards.append(Card(content: content, id: pairIndex*2))
             cards.append(Card(content: content, id: pairIndex*2+1))
         }

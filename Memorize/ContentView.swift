@@ -12,6 +12,8 @@ struct ContentView: View {
     var viewModel: EmojiMemoryGame // pointer to our model
     
     var body: some View {
+        let numberPairs = viewModel.cards.count/2
+        //let x = numberPairs==5 ? true : false
         return HStack() {
             // Not a LayoutView, like ZStack
             ForEach(viewModel.cards) { card in
@@ -23,7 +25,8 @@ struct ContentView: View {
             // MODIFIERS
             .padding() // padds the entire HStack
             .foregroundColor(Color.orange) // Sets the environment to every view inside HStack
-            .font(Font.largeTitle) // largest font - set to all texts in HStack
+            .font(numberPairs==5 ? Font.body : Font.largeTitle) // largest font - set to all texts in HStack
+            .aspectRatio(CGSize(width: 2, height: 3), contentMode: .fit)
     }
 }
 
