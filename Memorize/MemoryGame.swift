@@ -9,31 +9,43 @@
 import Foundation // Array, Dictionary, String, Int, Bool
 
 // NON-UI , represents a Model
-struct MemoryGame<CardContent> {
+struct MemoryGame<CardContent> where CardContent: Equatable {
     // what does the model do?
     var cards: Array<Card>
+    
+    // Computed Variable
+    var indexOfTheOneAndOnlyFaceUpCard: Int? {
+        get {
+            // New array, by filtering out
+            cards.indices.filter { cards[$0].isFaceUp }.only // (Int) -> Bool
+        }
+        set {
+            for index in cards.indices {
+                cards[index].isFaceUp = index == newValue // set every card to false unless its equal to what was set
+            }
+        }
+    }
     
     // Function to choose a Card and flip it - mutating, since self is immutable by itself!
     mutating func choose(card: Card){
         print("card chosen: \(card)")
-        let chosenIndex: Int = self.index(of: card)
-        self.cards[chosenIndex].isFaceUp = !self.cards[chosenIndex].isFaceUp // changes the array directly
-    }
-    
-    // Function to get the index of the card in our Cards Array
-    func index(of card: Card) -> Int {
-        // since card is Identifiable, we just need to look at the ID!
-        for index in 0..<self.cards.count {
-            if self.cards[index].id == card.id {
-                return index
+        if let chosenIndex = cards.firstIndex(matching: card), !cards[chosenIndex].isFaceUp, !cards[chosenIndex].isMatched {   // only exists if firstIndex!=nil
+            if let potentialMatchIndex = indexOfTheOneAndOnlyFaceUpCard {
+                if cards[chosenIndex].content == cards[potentialMatchIndex].content {
+                    cards[chosenIndex].isMatched = true
+                    cards[potentialMatchIndex].isMatched = true
+                }
+                self.cards[chosenIndex].isFaceUp = true
+            } else {
+                indexOfTheOneAndOnlyFaceUpCard = chosenIndex // setting the value
             }
+            
         }
-        return 0 // TODO: bogus!
     }
 
     // Only initializes all of our var
     init(numberOfPairsOfCards: Int, cardContentFactory: (Int) -> CardContent) {
-        cards = Array<Card>()                                               // empty array of Cards
+        cards = Array<Card>()                                                  // empty array of Cards
         for pairIndex in 0..<numberOfPairsOfCards {                            // not including numberOfPairsOfCards
             let content = cardContentFactory(pairIndex)                        // VIEWMODEL knows the type!
             cards.append(Card(content: content, id: pairIndex*2))
@@ -44,7 +56,7 @@ struct MemoryGame<CardContent> {
     
     // Will represent a single Card - name = MemoryGame.Card
     struct Card: Identifiable {
-        var isFaceUp: Bool = true
+        var isFaceUp: Bool = false
         var isMatched: Bool = false
         var content: CardContent // dont care type
         var id: Int // to make the struct identifiable

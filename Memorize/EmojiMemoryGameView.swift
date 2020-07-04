@@ -12,18 +12,16 @@ struct EmojiMemoryGameView: View {
     @ObservedObject var viewModel: EmojiMemoryGame // pointer to our model
     // body is called by the system, everytime it wants to draw a View of the model
     var body: some View {
-        return HStack() {
-            // Not a LayoutView, like ZStack
-            ForEach(viewModel.cards) { card in
-                CardView(card: card).onTapGesture {
-                    self.viewModel.choose(card: card)
-                } // initializes the variable
-            }
+        Grid(viewModel.cards) { card in
+            CardView(card: card).onTapGesture {
+                self.viewModel.choose(card: card)
+            } // initializes the variable
+            .padding(5)
         }
-            // MODIFIERS - applied to entire HStack
-            .padding() // padds
-            .foregroundColor(Color.orange) // Sets the environment to every view inside HStack
-            .aspectRatio(2/3, contentMode: .fit)
+        // MODIFIERS - applied to entire Grid
+        .padding() // padds
+        .foregroundColor(Color.orange) // Sets the environment to every view inside HStack
+        .aspectRatio(2/3, contentMode: .fit)
     }
 }
 
@@ -47,8 +45,10 @@ struct CardView: View{
                     .stroke(lineWidth: edgeLineWidth)  // Radius in points (=fonts) 'cornerRadius'-norm
                 Text(card.content)
             } else {
+                if !card.isMatched {
                 RoundedRectangle(cornerRadius: cornerRadius)
                     .fill() // Back of the card
+                }
             }
         }
         .font(Font.system(size: fontSize(for: size)))
