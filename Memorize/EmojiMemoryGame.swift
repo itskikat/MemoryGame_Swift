@@ -9,9 +9,9 @@
 import SwiftUI
 
 // ViewModel - shared
-class EmojiMemoryGame {
+class EmojiMemoryGame: ObservableObject {
     // Class can access/modify
-    private var model: MemoryGame<String> = EmojiMemoryGame.createMemoryGame()
+    @Published private var model: MemoryGame<String> = EmojiMemoryGame.createMemoryGame()
     
     // Static - set on the type
     static func createMemoryGame() -> MemoryGame<String> {
@@ -24,7 +24,7 @@ class EmojiMemoryGame {
     
     // MARK: - Access to the Model
     var cards: Array<MemoryGame<String>.Card> {
-        return model.cards.shuffled()
+        return model.cards
     }
     
     // MARK: - Intent(s)

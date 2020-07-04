@@ -9,11 +9,9 @@
 import SwiftUI
 
 struct EmojiMemoryGameView: View {
-    var viewModel: EmojiMemoryGame // pointer to our model
+    @ObservedObject var viewModel: EmojiMemoryGame // pointer to our model
     // body is called by the system, everytime it wants to draw a View of the model
     var body: some View {
-        let numberPairs = viewModel.cards.count/2
-        //let x = numberPairs==5 ? true : false
         return HStack() {
             // Not a LayoutView, like ZStack
             ForEach(viewModel.cards) { card in
@@ -25,8 +23,7 @@ struct EmojiMemoryGameView: View {
             // MODIFIERS - applied to entire HStack
             .padding() // padds
             .foregroundColor(Color.orange) // Sets the environment to every view inside HStack
-            .font(numberPairs==5 ? Font.body : Font.largeTitle) // largeTitle == largest font - set to all texts in HStack
-            .aspectRatio(CGSize(width: 2, height: 3), contentMode: .fit)
+            .aspectRatio(2/3, contentMode: .fit)
     }
 }
 
@@ -35,20 +32,35 @@ struct CardView: View{
     var card: MemoryGame<String>.Card
     
     var body: some View{
-        ZStack() {
-            if card.isFaceUp {
-                RoundedRectangle(cornerRadius: 10.0)
-                    .fill(Color.white) // Fills with white, no matter the theme
-                RoundedRectangle(cornerRadius: 10.0)
-                    .stroke(lineWidth: 3)  // Radius in points (=fonts) 'cornerRadius'-norm
-                Text(card.content)
-            } else {
-                RoundedRectangle(cornerRadius: 10.0)
-                    .fill() // Back of the card
-        
-            }
+        GeometryReader { geometry in
+            self.body(for: geometry.size)
         }
     }
+    
+    // To avoid having to worry about the 'self.' error
+    func body(for size: CGSize) -> some View {
+        ZStack {
+            if card.isFaceUp {
+                RoundedRectangle(cornerRadius: cornerRadius)
+                    .fill(Color.white) // Fills with white, no matter the theme
+                RoundedRectangle(cornerRadius: cornerRadius)
+                    .stroke(lineWidth: edgeLineWidth)  // Radius in points (=fonts) 'cornerRadius'-norm
+                Text(card.content)
+            } else {
+                RoundedRectangle(cornerRadius: cornerRadius)
+                    .fill() // Back of the card
+            }
+        }
+        .font(Font.system(size: fontSize(for: size)))
+    }
+    
+    // MARK: - Drawing Constants
+    let cornerRadius: CGFloat = 10.0
+    let edgeLineWidth: CGFloat = 3
+    func fontSize(for size: CGSize) -> CGFloat {
+        min(size.width, size.height) * 0.75
+    }
+    
 }
 
 
