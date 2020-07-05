@@ -12,16 +12,31 @@ struct EmojiMemoryGameView: View {
     @ObservedObject var viewModel: EmojiMemoryGame // pointer to our model
     // body is called by the system, everytime it wants to draw a View of the model
     var body: some View {
-        Grid(viewModel.cards) { card in
-            CardView(card: card).onTapGesture {
-                self.viewModel.choose(card: card)
-            } // initializes the variable
-            .padding(5)
+        NavigationView {
+            VStack {
+                Grid(viewModel.cards) { card in
+                    CardView(card: card).onTapGesture {
+                        self.viewModel.choose(card: card)
+                    } // initializes the variable
+                    .padding(5)
+                }
+                Text("Score: \(viewModel.score)")
+                    .font(Font.largeTitle)
+                    .padding()
+            }
+            // MODIFIERS - applied to entire NavigationView
+            .padding() // padds
+            .foregroundColor(viewModel.theme.color) // Sets the environment to every view inside 
+            .aspectRatio(2/3, contentMode: .fit)
+            .navigationBarTitle(viewModel.theme.name)
+            .navigationBarItems(trailing:
+                Button("New Game", action: {
+                    withAnimation(.easeInOut) {
+                        self.viewModel.newGame()
+                    }
+                })
+            )
         }
-        // MODIFIERS - applied to entire Grid
-        .padding() // padds
-        .foregroundColor(Color.orange) // Sets the environment to every view inside HStack
-        .aspectRatio(2/3, contentMode: .fit)
     }
 }
 

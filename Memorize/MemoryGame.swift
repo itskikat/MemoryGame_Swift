@@ -12,6 +12,8 @@ import Foundation // Array, Dictionary, String, Int, Bool
 struct MemoryGame<CardContent> where CardContent: Equatable {
     // what does the model do?
     var cards: Array<Card>
+    var alreadySeenCards = Array<Card>()
+    var score: Int = 0
     
     // Computed Variable
     var indexOfTheOneAndOnlyFaceUpCard: Int? {
@@ -21,6 +23,9 @@ struct MemoryGame<CardContent> where CardContent: Equatable {
         }
         set {
             for index in cards.indices {
+                if cards[index].isFaceUp {
+                    alreadySeenCards.append(cards[index])
+                }
                 cards[index].isFaceUp = index == newValue // set every card to false unless its equal to what was set
             }
         }
@@ -29,14 +34,26 @@ struct MemoryGame<CardContent> where CardContent: Equatable {
     // Function to choose a Card and flip it - mutating, since self is immutable by itself!
     mutating func choose(card: Card){
         print("card chosen: \(card)")
-        if let chosenIndex = cards.firstIndex(matching: card), !cards[chosenIndex].isFaceUp, !cards[chosenIndex].isMatched {   // only exists if firstIndex!=nil
-            if let potentialMatchIndex = indexOfTheOneAndOnlyFaceUpCard {
+        if let chosenIndex = cards.firstIndex(matching: card), !cards[chosenIndex].isMatched {   // only exists if firstIndex!=nil
+            if let potentialMatchIndex = indexOfTheOneAndOnlyFaceUpCard, potentialMatchIndex != chosenIndex {
                 if cards[chosenIndex].content == cards[potentialMatchIndex].content {
+                    // Matched! Add 2 points
                     cards[chosenIndex].isMatched = true
                     cards[potentialMatchIndex].isMatched = true
+                    score += 2
+                }
+                else {
+                    // Mismatch!
+                    if (alreadySeenCards.firstIndex(matching: cards[chosenIndex]) != nil){
+                        score -= 1
+                    }
+                    if (alreadySeenCards.firstIndex(matching: cards[potentialMatchIndex]) != nil){
+                        score -= 1
+                    }
                 }
                 self.cards[chosenIndex].isFaceUp = true
             } else {
+                // Zero or more than one facing up cards
                 indexOfTheOneAndOnlyFaceUpCard = chosenIndex // setting the value
             }
             
