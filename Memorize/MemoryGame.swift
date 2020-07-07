@@ -11,12 +11,12 @@ import Foundation // Array, Dictionary, String, Int, Bool
 // NON-UI , represents a Model
 struct MemoryGame<CardContent> where CardContent: Equatable {
     // what does the model do?
-    var cards: Array<Card>
+    private (set) var cards: Array<Card>        // Setting is private, reading is not
     var alreadySeenCards = Array<Card>()
     var score: Int = 0
     
     // Computed Variable
-    var indexOfTheOneAndOnlyFaceUpCard: Int? {
+    private var indexOfTheOneAndOnlyFaceUpCard: Int? {
         get {
             // New array, by filtering out
             cards.indices.filter { cards[$0].isFaceUp }.only // (Int) -> Bool
