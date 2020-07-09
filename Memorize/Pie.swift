@@ -15,6 +15,16 @@ struct Pie: Shape {
     var endAngle: Angle
     var clockwise: Bool = false // default
     
+    var animatableData: AnimatablePair<Double,Double> { // animating our angles
+        get {
+            AnimatablePair(startAngle.radians, endAngle.radians)
+        }
+        set {
+            startAngle = Angle.radians(newValue.first)
+            endAngle = Angle.radians(newValue.second)
+        }
+    }
+    
     func path(in rect: CGRect) -> Path { // rect - where we're supposed to fit our shape
         let center = CGPoint(x: rect.midX, y: rect.midY) // center of our rectagle
         let radius = min(rect.width, rect.height) / 2
